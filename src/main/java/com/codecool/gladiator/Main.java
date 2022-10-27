@@ -10,6 +10,9 @@ public class Main {
         Colosseum colosseum = new Colosseum(new ConsoleView(), new GladiatorFactory("Names.txt"));
         colosseum.welcomeAndAskForStages();
         colosseum.runSimulation();
+
+        Colosseum secondColosseum = new Colosseum(new ConsoleView(), colosseum.getSurvivingGladiators());
+        secondColosseum.runSecondarySimulation();
     }
 
 }

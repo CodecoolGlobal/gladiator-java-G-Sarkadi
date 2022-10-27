@@ -1,5 +1,9 @@
 package com.codecool.gladiator.model.gladiators;
 
+import com.codecool.gladiator.util.RandomUtils;
+
+import java.util.Random;
+
 public abstract class Gladiator {
 
     private final String name;
@@ -8,6 +12,7 @@ public abstract class Gladiator {
     private final int baseDex;
     private int level;
     private int currentHp;
+    private WeaponEffect weaponEffect;
 
     /**
      * Constructor for Gladiators
@@ -25,6 +30,7 @@ public abstract class Gladiator {
         this.baseDex = baseDex;
         this.level = level;
         this.currentHp = this.getMaxHp();
+        handleWeaponEffect();
     }
 
     /**
@@ -147,12 +153,36 @@ public abstract class Gladiator {
         }
     }
 
+    public enum WeaponEffect {
+        BLEEDING,
+        POISON,
+        BURNING,
+        PARALYZING;
+
+        public static WeaponEffect getRandomWeaponEffect() {
+            WeaponEffect[] weaponEffects = values();
+            return weaponEffects[RandomUtils.getRandom().nextInt(weaponEffects.length)];
+        }
+    }
+
+
+    private void handleWeaponEffect() {
+        boolean isWeaponEffect = RandomUtils.isWeaponEffect();
+        if (isWeaponEffect) {
+            this.weaponEffect = WeaponEffect.getRandomWeaponEffect();
+        }
+    }
+
     @Override
     public String toString() {
+        String weaponEffectString = "";
+        if (weaponEffect != null) {
+            weaponEffectString = ", Weapon effect: " + weaponEffect;
+        }
         return getFullName() +
                 " (" + currentHp + "/" + currentHp + " HP, " +
                 getMaxSp() + " SP, " +
                 getMaxDex() + " DEX, " +
-                getLevel() + " LVL)";
+                getLevel() + " LVL" + weaponEffectString + ")";
     }
 }
