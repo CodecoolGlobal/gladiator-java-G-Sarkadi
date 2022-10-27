@@ -61,6 +61,8 @@ public class Combat {
                 if (defender.isDead()) {
                     combatLog.add(defender + " has died, " + attacker + " wins!");
                     winner = attacker;
+                    attacker.levelUp();
+                    attacker.healUp();
                     break;
                 }
             } else {

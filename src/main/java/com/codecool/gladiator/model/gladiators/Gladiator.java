@@ -125,7 +125,6 @@ public abstract class Gladiator {
 
     public void healUp() {
         currentHp = getMaxHp();
-        // TODO id it good?
     }
 
     public enum Multiplier {

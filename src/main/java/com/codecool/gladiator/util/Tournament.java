@@ -88,19 +88,25 @@ public class Tournament {
      */
     public void add(Contestants value) {
         if (contestants == null) {
-            contestants = value;
-        } else if (leftBranch == null){
-            leftBranch = new Tournament(contestants);
+            if (leftBranch == null && rightBranch == null) {
+                // Brand new, empty Tournament
+                contestants = value;
+            } else {
+                // branches are occupied, contestant is not, pass down the value left / right
+                if (left) {
+                    leftBranch.add(value);
+                    left = false;
+                } else {
+                    rightBranch.add(value);
+                    left = true;
+                }
+            }
+        } else {
+            // there is a contestant, left / right branches supposed to be empty
+            leftBranch = new Tournament(getContestants());
             rightBranch = new Tournament(value);
             contestants = null;
-        } else if (left) {
-            leftBranch.add(value);
-            left = false;
-        } else {
-            rightBranch.add(value);
-            left = true;
         }
-
     }
 
     /**
