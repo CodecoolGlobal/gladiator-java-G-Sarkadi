@@ -20,6 +20,8 @@ public class Combat {
     private final static int MAX_CLAMP = 100;
     private final static double MIN_ATTACK_MODIFIER = 0.1;
     private final static double MAX_ATTACK_MODIFIER = 0.5;
+    private final static int MIN_PERCENT = 1;
+    private final static int MAX_PERCENT = 100;
 
     public Combat(Contestants contestants) {
         this.gladiator1 = contestants.gladiator1;
@@ -81,11 +83,11 @@ public class Combat {
         } else if (chanceOfHitting > MAX_CLAMP) {
             chanceOfHitting = MAX_CLAMP;
         }
-        return RandomUtils.getRandom().nextInt(1, 101) <= chanceOfHitting;
+        return RandomUtils.getIntValueBetween(MAX_PERCENT, MIN_PERCENT) <= chanceOfHitting;
     }
 
     private int calculateAttack(Gladiator attacker, Gladiator defender) {
-        double attackModifier = RandomUtils.getRandom().nextDouble(MAX_ATTACK_MODIFIER - MIN_ATTACK_MODIFIER) + MIN_ATTACK_MODIFIER;
+        double attackModifier = RandomUtils.getDoubleValueBetween(MAX_ATTACK_MODIFIER, MIN_ATTACK_MODIFIER);
         int damage = (int) (attacker.getSp() * attackModifier);
         defender.decreaseHpBy(damage);
         return damage;

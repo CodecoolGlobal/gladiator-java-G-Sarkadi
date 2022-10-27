@@ -8,4 +8,12 @@ public class RandomUtils {
     public static Random getRandom() {
         return RANDOM;
     }
+
+    public static int getIntValueBetween(int max, int min) {
+        return RANDOM.nextInt(max - min) + min;
+    }
+
+    public static double getDoubleValueBetween(double max, double min) {
+        return ((max - min) + min ) * RANDOM.nextDouble();
+    }
 }
