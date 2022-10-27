@@ -87,6 +87,17 @@ public class Combat {
     }
 
     private int calculateAttack(Gladiator attacker, Gladiator defender) {
+
+
+
+
+        // TODO handle Weapon effects
+
+
+
+
+        Gladiator.WeaponEffect weaponEffect = attacker.getWeaponEffect();
+
         double attackModifier = RandomUtils.getDoubleValueBetween(MAX_ATTACK_MODIFIER, MIN_ATTACK_MODIFIER);
         int damage = (int) (attacker.getSp() * attackModifier);
         defender.decreaseHpBy(damage);

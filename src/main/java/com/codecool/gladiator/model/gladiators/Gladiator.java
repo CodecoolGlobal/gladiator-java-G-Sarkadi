@@ -173,6 +173,10 @@ public abstract class Gladiator {
         }
     }
 
+    public WeaponEffect getWeaponEffect() {
+        return weaponEffect;
+    }
+
     @Override
     public String toString() {
         String weaponEffectString = "";
