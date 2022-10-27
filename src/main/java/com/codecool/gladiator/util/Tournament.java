@@ -122,15 +122,4 @@ public class Tournament {
             add(value);
         }
     }
-
-
-    public Gladiator fight() {
-        if (contestants != null) {
-            Combat combat = new Combat(contestants);
-            return combat.simulate();
-        } else {
-            Combat recursiveCombat = new Combat(new Contestants(leftBranch.fight(), rightBranch.fight()));
-            return recursiveCombat.simulate();
-        }
-    }
 }

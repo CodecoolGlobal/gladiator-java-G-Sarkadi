@@ -65,9 +65,15 @@ public class Colosseum {
         // go down to the tree, if there is a size 1 tree under, fetch the contestants from it (both tree)
         // run the simulateCombat on them
         // the winners create a new contestant, the current tree deletes the branches, set the contestant and size
-        Gladiator winner = tournament.fight();
 
-        return winner;
+        Contestants contestants = tournament.getContestants();
+        if (contestants != null) {
+            Gladiator winner = simulateCombat(new Combat(contestants));
+        }
+
+
+
+        return null;
     }
 
     private Gladiator simulateCombat(Combat combat) {
@@ -76,16 +82,17 @@ public class Colosseum {
         announceCombat(gladiator1, gladiator2);
 
         // Todo
-        // run the fight, decide the winner and loser
+        Gladiator winner = combat.simulate();
+        Gladiator loser;
+        if (winner.equals(gladiator1)) {
+            loser = gladiator2;
+        } else {
+            loser = gladiator1;
+        }
 
         displayCombatLog(combat);
-        announceWinnerAndLoser(gladiator1, gladiator2);
-
-
-        // return winner!!!
-
-
-        return gladiator1;
+        announceWinnerAndLoser(winner, loser);
+        return winner;
     }
 
     public void welcome() {
