@@ -72,7 +72,7 @@ public abstract class Gladiator {
      * @return the full name
      */
     public String getFullName() {
-        return this.getClass().getName() + " " + this.name;
+        return this.getClass().getSimpleName() + " " + this.name;
     }
 
     /**
@@ -144,4 +144,8 @@ public abstract class Gladiator {
         }
     }
 
+    @Override
+    public String toString() {
+        return getFullName();
+    }
 }

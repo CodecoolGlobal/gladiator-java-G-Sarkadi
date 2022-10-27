@@ -41,14 +41,23 @@ public class Colosseum {
 
     private List<Gladiator> generateGladiators(int numberOfGladiators) {
         List<Gladiator> gladiators = new ArrayList<>();
-        // Todo
+        for (int i = 0; i < numberOfGladiators; i++) {
+            gladiators.add(gladiatorFactory.generateRandomGladiator());
+        }
         introduceGladiators(gladiators);
         return gladiators;
     }
 
     private List<Contestants> splitGladiatorsIntoPairs(List<Gladiator> gladiators) {
-        // Todo
-        return new LinkedList<>();
+        List<Contestants> contestants = new LinkedList<>();
+        while (!gladiators.isEmpty()) {
+            Gladiator gladiator1 = gladiators.get(0);
+            Gladiator gladiator2 = gladiators.get(1);
+            contestants.add(new Contestants(gladiator1, gladiator2));
+            gladiators.remove(gladiator1);
+            gladiators.remove(gladiator2);
+        }
+        return contestants;
     }
 
     private Gladiator getChampion(Tournament tournament) {
