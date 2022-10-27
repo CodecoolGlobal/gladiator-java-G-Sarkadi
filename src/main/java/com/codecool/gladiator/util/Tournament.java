@@ -1,6 +1,8 @@
 package com.codecool.gladiator.util;
 
+import com.codecool.gladiator.model.Combat;
 import com.codecool.gladiator.model.Contestants;
+import com.codecool.gladiator.model.gladiators.Gladiator;
 
 import java.util.List;
 
@@ -87,6 +89,7 @@ public class Tournament {
      * @param value the value to be added to the tree
      */
     public void add(Contestants value) {
+        size++;
         if (contestants == null) {
             if (leftBranch == null && rightBranch == null) {
                 // Brand new, empty Tournament
@@ -117,6 +120,17 @@ public class Tournament {
     public void addAll(List<Contestants> values) {
         for (Contestants value : values) {
             add(value);
+        }
+    }
+
+
+    public Gladiator fight() {
+        if (contestants != null) {
+            Combat combat = new Combat(contestants);
+            return combat.simulate();
+        } else {
+            Combat recursiveCombat = new Combat(new Contestants(leftBranch.fight(), rightBranch.fight()));
+            return recursiveCombat.simulate();
         }
     }
 }
