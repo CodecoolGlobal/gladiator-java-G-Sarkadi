@@ -59,7 +59,7 @@ public class Combat {
                 int damage = calculateAttack(attacker, defender);
                 combatLog.add(attacker + " deals " + damage + " damage");
                 if (defender.isDead()) {
-                    combatLog.add(defender + " has died, " + attacker + " wins!\n");
+//                    combatLog.add(defender + " has died, " + attacker + " wins!\n");
                     winner = attacker;
                     attacker.levelUp();
                     attacker.healUp();
