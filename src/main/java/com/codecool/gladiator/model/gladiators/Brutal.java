@@ -19,4 +19,14 @@ public class Brutal extends Gladiator {
     protected Multiplier getDexMultiplier() {
         return Multiplier.Low;
     }
+
+    @Override
+    public String getCustomHitMessage(int damage) {
+        return "The blade of " + getName() + " pounced the enemy and dealt " + damage + " damage!";
+    }
+
+    @Override
+    public String getCustomMissMessage() {
+        return getName() + " was too slow ant the opponent deflected the stroke.";
+    }
 }

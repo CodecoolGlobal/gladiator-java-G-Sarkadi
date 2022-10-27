@@ -56,16 +56,15 @@ public class Combat {
             boolean isThereAHit = isThereAHit(attacker,defender);
             if (isThereAHit) {
                 int damage = calculateAttack(attacker, defender);
-                combatLog.add(attacker.getName() + " deals " + damage + " damage");
+                combatLog.add(attacker.getCustomHitMessage(damage));
                 if (defender.isDead()) {
-//                    combatLog.add(defender + " has died, " + attacker + " wins!\n");
                     winner = attacker;
                     attacker.levelUp();
                     attacker.healUp();
                     break;
                 }
             } else {
-                combatLog.add(attacker.getName() + " missed");
+                combatLog.add(attacker.getCustomMissMessage());
             }
             attacker = switchRoles(attacker);
             defender = switchRoles(defender);

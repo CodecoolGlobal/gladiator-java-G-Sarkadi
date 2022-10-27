@@ -127,6 +127,10 @@ public abstract class Gladiator {
         currentHp = getMaxHp();
     }
 
+    public abstract String getCustomHitMessage(int damage);
+
+    public abstract String getCustomMissMessage();
+
     public enum Multiplier {
         Low(0.75),
         Medium(1.0),

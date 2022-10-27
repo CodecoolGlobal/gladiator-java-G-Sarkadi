@@ -28,4 +28,14 @@ public class Swordsman extends Gladiator {
     protected Multiplier getDexMultiplier() {
         return Multiplier.Medium;
     }
+
+    @Override
+    public String getCustomHitMessage(int damage) {
+        return "The sword of " + getName() + " was lucky this time and caused " + damage + " damage!";
+    }
+
+    @Override
+    public String getCustomMissMessage() {
+        return "The enemy skillfully avoided the stroke of " + getName();
+    }
 }
