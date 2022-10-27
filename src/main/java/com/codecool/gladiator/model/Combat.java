@@ -51,13 +51,12 @@ public class Combat {
         Gladiator attacker = starter ? gladiator1 : gladiator2;
         Gladiator defender = starter ? gladiator2 : gladiator1;
         Gladiator winner;
-
         // attack until someone dies
         while (true) {
             boolean isThereAHit = isThereAHit(attacker,defender);
             if (isThereAHit) {
                 int damage = calculateAttack(attacker, defender);
-                combatLog.add(attacker + " deals " + damage + " damage");
+                combatLog.add(attacker.getName() + " deals " + damage + " damage");
                 if (defender.isDead()) {
 //                    combatLog.add(defender + " has died, " + attacker + " wins!\n");
                     winner = attacker;
@@ -66,7 +65,7 @@ public class Combat {
                     break;
                 }
             } else {
-                combatLog.add(attacker + " missed");
+                combatLog.add(attacker.getName() + " missed");
             }
             attacker = switchRoles(attacker);
             defender = switchRoles(defender);

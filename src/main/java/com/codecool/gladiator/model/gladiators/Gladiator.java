@@ -145,6 +145,10 @@ public abstract class Gladiator {
 
     @Override
     public String toString() {
-        return getFullName();
+        return getFullName() +
+                " (" + currentHp + "/" + currentHp + " HP, " +
+                getMaxSp() + " SP, " +
+                getMaxDex() + " DEX, " +
+                getLevel() + " LVL)";
     }
 }

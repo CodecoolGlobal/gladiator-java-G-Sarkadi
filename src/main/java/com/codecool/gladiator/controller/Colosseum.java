@@ -61,11 +61,6 @@ public class Colosseum {
     }
 
     private Gladiator getChampion(Tournament tournament) {
-        // Todo - call simulateCombat as many times as needed
-        // go down to the tree, if there is a size 1 tree under, fetch the contestants from it (both tree)
-        // run the simulateCombat on them
-        // the winners create a new contestant, the current tree deletes the branches, set the contestant and size
-
         Contestants contestants = tournament.getContestants();
         Gladiator winner = null;
         if (contestants != null) {
@@ -73,9 +68,6 @@ public class Colosseum {
         } else {
             winner = simulateCombat(new Combat(new Contestants(getChampion(tournament.getLeftBranch()), getChampion(tournament.getRightBranch()))));
         }
-
-
-
         return winner;
     }
 
@@ -119,6 +111,7 @@ public class Colosseum {
         view.display(String.format("\nDuel %s versus %s:", gladiator1.getName(), gladiator2.getName()));
         view.display(String.format(" - %s", gladiator1));
         view.display(String.format(" - %s", gladiator2));
+        view.display("\nBegin!");
     }
 
     private void displayCombatLog(Combat combat) {
@@ -126,7 +119,7 @@ public class Colosseum {
     }
 
     private void announceWinnerAndLoser(Gladiator winner, Gladiator loser) {
-        view.display(String.format("%s has died, %s wins!", loser.getFullName(), winner.getFullName()));
+        view.display(String.format("%s has died, %s wins!\n", loser.getFullName(), winner.getFullName()));
     }
 
     private void announceChampion(Gladiator champion) {
