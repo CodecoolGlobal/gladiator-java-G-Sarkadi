@@ -7,19 +7,16 @@ public class Brutal extends Gladiator {
 
     @Override
     protected Multiplier getHpMultiplier() {
-        // Todo
-        return null;
+        return Multiplier.High;
     }
 
     @Override
     protected Multiplier getSpMultiplier() {
-        // Todo
-        return null;
+        return Multiplier.High;
     }
 
     @Override
     protected Multiplier getDexMultiplier() {
-        // Todo
-        return null;
+        return Multiplier.Low;
     }
 }

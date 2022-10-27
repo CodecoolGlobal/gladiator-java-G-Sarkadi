@@ -7,6 +7,7 @@ public abstract class Gladiator {
     private final int baseSp;
     private final int baseDex;
     private int level;
+    private int currentHp;
 
     /**
      * Constructor for Gladiators
@@ -23,6 +24,7 @@ public abstract class Gladiator {
         this.baseSp = baseSp;
         this.baseDex = baseDex;
         this.level = level;
+        this.currentHp = this.getMaxHp();
     }
 
     /**
@@ -48,6 +50,21 @@ public abstract class Gladiator {
     }
 
     /**
+     *
+     * @return gladiators level
+     */
+    public int getLevel() {
+        return level;
+    }
+
+    /**
+     * Increments the gladiators level by 1
+     */
+    public void levelUp() {
+        level++;
+    }
+
+    /**
      * Returns the full name of the gladiator
      * assembled by the subtype and the name
      * (e.g. "Brutal Brutus" or "Archer Leo")
@@ -55,8 +72,60 @@ public abstract class Gladiator {
      * @return the full name
      */
     public String getFullName() {
-        // Todo
-        return name;
+        return this.getClass().getName() + " " + this.name;
+    }
+
+    /**
+     * Calculate and return the max HP
+     * @return max HP
+     */
+    public int getMaxHp() {
+        return (int) (baseHp * getHpMultiplier().getValue() * level);
+    }
+
+    /**
+     * Calculate and return the max SP
+     * @return max SP
+     */
+    public int getMaxSp() {
+        return (int) (baseSp * getSpMultiplier().getValue() * level);
+    }
+
+    /**
+     * Calculate and get the max dexterity
+     * @return max dex
+     */
+    public int getMaxDex() {
+        return (int) (baseDex * getDexMultiplier().getValue() * level);
+    }
+
+    public void decreaseHpBy(int attack) {
+        currentHp -= attack;
+    }
+
+    public boolean isDead() {
+        return currentHp <= 0;
+    }
+
+    public int getHp() {
+        return baseHp;
+    }
+
+    public int getSp() {
+        return getMaxSp();
+    }
+
+    public int getDex() {
+        return getMaxDex();
+    }
+
+    public int getCurrentHp() {
+        return currentHp;
+    }
+
+    public void healUp() {
+        currentHp = getMaxHp();
+        // TODO id it good?
     }
 
     public enum Multiplier {

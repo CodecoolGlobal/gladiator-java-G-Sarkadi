@@ -1,13 +1,21 @@
 package com.codecool.gladiator.model.gladiators;
 
+import com.codecool.gladiator.util.RandomUtils;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GladiatorFactory {
 
     private List<String> names;
+    private List<GladiatorTypes> gladiatorTypes = new ArrayList<>();
+    private static final int MIN_ATTRIBUTE = 25;
+    private static final int MAX_ATTRIBUTE = 100;
+    private static final int MIN_LEVEL = 1;
+    private static final int MAX_LEVEL = 5;
 
     public GladiatorFactory(String fileOfNames) {
         try {
@@ -17,6 +25,11 @@ public class GladiatorFactory {
             System.out.println("Names file not found or corrupted!");
             System.exit(1);
         }
+        gladiatorTypes.add(GladiatorTypes.ARCHER);
+        gladiatorTypes.add(GladiatorTypes.ASSASSIN);
+        gladiatorTypes.add(GladiatorTypes.BRUTAL);
+        gladiatorTypes.add(GladiatorTypes.SWORDSMAN);
+        gladiatorTypes.add(GladiatorTypes.SWORDSMAN);
     }
 
     /**
@@ -25,8 +38,7 @@ public class GladiatorFactory {
      * @return gladiator name
      */
     private String getRandomName() {
-        // Todo
-        return "Brutus";
+        return names.get(RandomUtils.getRandom().nextInt(names.size()));
     }
 
     /**
@@ -36,7 +48,35 @@ public class GladiatorFactory {
      * @return new Gladiator
      */
     public Gladiator generateRandomGladiator() {
-        // Todo
-        return new Brutal(getRandomName(), 50, 50, 50, 1);
+        GladiatorTypes gladiatorType = gladiatorTypes.get(RandomUtils.getRandom().nextInt(gladiatorTypes.size()));
+        int hp = RandomUtils.getRandom().nextInt(MAX_ATTRIBUTE - MIN_ATTRIBUTE) + MIN_ATTRIBUTE;
+        int sp = RandomUtils.getRandom().nextInt(MAX_ATTRIBUTE - MIN_ATTRIBUTE) + MIN_ATTRIBUTE;
+        int dex = RandomUtils.getRandom().nextInt(MAX_ATTRIBUTE - MIN_ATTRIBUTE) + MIN_ATTRIBUTE;
+        int level = RandomUtils.getRandom().nextInt(MAX_LEVEL - MIN_LEVEL) + MIN_LEVEL;
+
+        Gladiator newGladiator = null;
+
+        switch (gladiatorType) {
+            case ASSASSIN:
+                newGladiator = new Assassin(getRandomName(), hp, sp, dex, level);
+                break;
+            case ARCHER:
+                newGladiator = new Archer(getRandomName(), hp, sp, dex, level);
+                break;
+            case BRUTAL:
+                newGladiator = new Brutal(getRandomName(), hp, sp, dex, level);
+                break;
+            case SWORDSMAN:
+                newGladiator = new Swordsman(getRandomName(), hp, sp, dex, level);
+                break;
+        }
+        return newGladiator;
+    }
+
+    public enum GladiatorTypes {
+        ARCHER,
+        ASSASSIN,
+        BRUTAL,
+        SWORDSMAN
     }
 }
