@@ -5,7 +5,6 @@ import java.util.Random;
 public class RandomUtils {
 
     private static final Random RANDOM = new Random();
-    private static final int SPARING_CHANCE = 25;
     private static final int MAX_PERCENT = 101;
     private static final int MIN_PERCENT = 1;
 
@@ -19,10 +18,6 @@ public class RandomUtils {
 
     public static double getDoubleValueBetween(double max, double min) {
         return ((max - min) + min ) * RANDOM.nextDouble();
-    }
-
-    public static boolean isSpared() {
-        return getIntValueBetween(MAX_PERCENT, MIN_PERCENT) <= SPARING_CHANCE;
     }
 
     public static boolean getChance(int percent) {

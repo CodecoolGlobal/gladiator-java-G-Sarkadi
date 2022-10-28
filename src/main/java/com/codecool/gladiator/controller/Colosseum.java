@@ -128,7 +128,7 @@ public class Colosseum {
         displayCombatLog(combat);
         if (sparing) {
             if (RandomUtils.getChance(SPARING_CHANCE)) {
-                loser.healUp();
+                loser.recuperate();
                 survivingGladiators.add(loser);
                 announceWinnerAndLoser(winner, loser);
                 return winner;
