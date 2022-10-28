@@ -15,6 +15,7 @@ public class Colosseum {
 
     public static final int MIN_TOURNAMENT_STAGES = 1;
     public static final int MAX_TOURNAMENT_STAGES = 10;
+    private static final int SPARING_CHANCE = 25;
 
     private final Viewable view;
     private final GladiatorFactory gladiatorFactory;
@@ -50,6 +51,9 @@ public class Colosseum {
         // announceChampion(getChampion(new BinaryTree<>(generateGladiators((int) Math.pow(2, stages)))));
     }
 
+    /**
+     * Runs the second Tournament with the survivors of the first
+     */
     public void runSecondarySimulation() {
         welcome();
         if (survivingGladiators.isEmpty()) {
@@ -61,7 +65,6 @@ public class Colosseum {
             announceSingleContestant(soleSurvivor);
             return;
         }
-        reviveGladiators();
         introduceGladiators(survivingGladiators);
         var contestants = splitGladiatorsIntoPairs(survivingGladiators);
         var tournamentTree = new Tournament(contestants);
@@ -84,13 +87,11 @@ public class Colosseum {
             Gladiator gladiator1 = gladiators.get(0);
             gladiators.remove(gladiator1);
             Gladiator gladiator2 = null;
-            try {
+            if (!gladiators.isEmpty()) {
                 gladiator2 = gladiators.get(0);
-            } catch (IndexOutOfBoundsException e) {
-
+                gladiators.remove(gladiator2);
             }
             contestants.add(new Contestants(gladiator1, gladiator2));
-            gladiators.remove(gladiator2);
         }
         return contestants;
     }
@@ -126,7 +127,8 @@ public class Colosseum {
 
         displayCombatLog(combat);
         if (sparing) {
-            if (RandomUtils.isSpared()) {
+            if (RandomUtils.getChance(SPARING_CHANCE)) {
+                loser.healUp();
                 survivingGladiators.add(loser);
                 announceWinnerAndLoser(winner, loser);
                 return winner;
@@ -134,12 +136,6 @@ public class Colosseum {
         }
         announceWinnerAndDead(winner, loser);
         return winner;
-    }
-
-    private void reviveGladiators() {
-        for (Gladiator gladiator : survivingGladiators){
-            gladiator.healUp();
-        }
     }
 
     private void announceNoNeedForCombat(Gladiator gladiator) {

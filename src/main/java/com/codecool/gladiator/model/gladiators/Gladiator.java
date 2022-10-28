@@ -13,6 +13,7 @@ public abstract class Gladiator {
     private int level;
     private int currentHp;
     private WeaponEffect weaponEffect;
+    private static final int WEAPON_EFFECT_CHANCE = 10;
 
     /**
      * Constructor for Gladiators
@@ -167,7 +168,7 @@ public abstract class Gladiator {
 
 
     private void handleWeaponEffect() {
-        boolean isWeaponEffect = RandomUtils.isWeaponEffect();
+        boolean isWeaponEffect = RandomUtils.getChance(WEAPON_EFFECT_CHANCE);
         if (isWeaponEffect) {
             this.weaponEffect = WeaponEffect.getRandomWeaponEffect();
         }

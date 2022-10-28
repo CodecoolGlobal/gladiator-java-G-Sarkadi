@@ -31,11 +31,11 @@ public class Archer extends Gladiator{
 
     @Override
     public String getCustomHitMessage(int damage) {
-        return "The arrow of " + getName() + " found it's target and caused " + damage + " damage!";
+        return "The arrow of " + getName() + " found it's target and caused " + damage + " damage";
     }
 
     @Override
     public String getCustomMissMessage() {
-        return "The arrow of " + getName() + " missed it's mark.";
+        return "The arrow of " + getName() + " missed it's mark";
     }
 }

@@ -22,11 +22,11 @@ public class Brutal extends Gladiator {
 
     @Override
     public String getCustomHitMessage(int damage) {
-        return "The blade of " + getName() + " pounced the enemy and dealt " + damage + " damage!";
+        return "The blade of " + getName() + " pounced the enemy and dealt " + damage + " damage";
     }
 
     @Override
     public String getCustomMissMessage() {
-        return getName() + " was too slow ant the opponent deflected the stroke.";
+        return getName() + " was too slow ant the opponent deflected the stroke";
     }
 }
