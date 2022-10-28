@@ -97,10 +97,18 @@ public class Combat {
     }
 
     private boolean isThereAHit(Gladiator attacker, Gladiator defender) {
+        // if defender is paralyzed, there is a guaranteed hit
+        int defenderParalyzedDuration = defender.getParalyzedDuration();
+        if (defenderParalyzedDuration > 0){
+            defender.setParalyzed(--defenderParalyzedDuration);
+            return true;
+        }
 
-
-        // TODO paralyzing, defence
-
+        // if attacker is paralyzed, there is a guaranteed miss
+        int attackerParalyzedDuration = attacker.getParalyzedDuration();
+        if (attackerParalyzedDuration > 0) {
+            return false;
+        }
 
         int chanceOfHitting = attacker.getDex() - defender.getDex();
         if (chanceOfHitting < MIN_CLAMP) {
@@ -112,6 +120,7 @@ public class Combat {
     }
 
     private int calculateAttack(Gladiator attacker, Gladiator defender) {
+        // handle weapon effect hit and damage
         Gladiator.WeaponEffect weaponEffect = attacker.getWeaponEffect();
         boolean isHitByWeaponEffect = false;
         if (weaponEffect != null) {
@@ -122,17 +131,9 @@ public class Combat {
         }
         int weaponEffectDamage = calculateWeaponEffectDamage(defender);
 
-        // TODO handle Weapon effects
-
-
-        // TODO paralyzing, attack
-
+        // handle base attack
         double attackModifier = RandomUtils.getDoubleValueBetween(MAX_ATTACK_MODIFIER, MIN_ATTACK_MODIFIER);
         int baseDamage = (int) (attacker.getSp() * attackModifier);
-
-
-
-
 
         return baseDamage + weaponEffectDamage;
     }
