@@ -118,10 +118,6 @@ public abstract class Gladiator {
         return currentHp <= 0;
     }
 
-    public int getHp() {
-        return baseHp;
-    }
-
     public int getSp() {
         return getMaxSp();
     }
@@ -211,7 +207,8 @@ public abstract class Gladiator {
         BLEEDING,
         POISON,
         BURNING,
-        PARALYZING;
+        PARALYZING,
+        CRITICAL_HIT;
 
         public static WeaponEffect getRandomWeaponEffect() {
             WeaponEffect[] weaponEffects = values();

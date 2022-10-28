@@ -20,7 +20,7 @@ public class Colosseum {
     private final Viewable view;
     private final GladiatorFactory gladiatorFactory;
     private int stages = 2;
-    private boolean sparing;
+    private final boolean sparing;
     private List<Gladiator> survivingGladiators = new ArrayList<>();
 
     public Colosseum(Viewable view, GladiatorFactory gladiatorFactory) {

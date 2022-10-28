@@ -14,6 +14,7 @@ public class Combat {
     private static final int POISON_CHANCE = 20;
     private static final int BURNING_CHANCE = 15;
     private static final int PARALYZING_CHANCE = 10;
+    private static final int CRITICAL_HIT_CHANCE = 5;
     private static final int MIN_BURN_DURATION = 1;
     private static final int MAX_BURN_DURATION = 5;
     private static final int PARALYZED_DURATION = 3;
@@ -148,6 +149,8 @@ public class Combat {
                 return RandomUtils.getChance(BURNING_CHANCE);
             case PARALYZING:
                 return RandomUtils.getChance(PARALYZING_CHANCE);
+            case CRITICAL_HIT:
+                return RandomUtils.getChance(CRITICAL_HIT_CHANCE);
             default:
                 return false;
         }
@@ -173,9 +176,15 @@ public class Combat {
                 combatLog.add(defender.getName() + " is burning!");
                 break;
             case PARALYZING:
-                // unable to attack or defend for 3 turns, if paralyzed again, it is reset to 3 turns
+                // unable to attack or defend for 3 turns, if paralyzed again, it's reset to 3 turns
                 defender.setParalyzed(PARALYZED_DURATION);
                 combatLog.add(defender.getName() + " is paralyzed!");
+                break;
+            case CRITICAL_HIT:
+                // defender loses half of its hp
+                int halfHp = defender.getCurrentHp() / 2;
+                defender.decreaseHpBy(halfHp);
+                combatLog.add(defender.getName() + " suffered a critical hit and lost " + halfHp + " Hp!");
                 break;
         }
     }
@@ -214,7 +223,6 @@ public class Combat {
         return 0;
     }
 
-
     public Gladiator getGladiator1() {
         return gladiator1;
     }
@@ -226,5 +234,4 @@ public class Combat {
     public String getCombatLog(String separator) {
         return String.join(separator, combatLog);
     }
-
 }
