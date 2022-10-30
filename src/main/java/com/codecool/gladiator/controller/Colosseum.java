@@ -139,7 +139,7 @@ public class Colosseum {
     }
 
     private void announceNoNeedForCombat(Gladiator gladiator) {
-        view.display(gladiator + " has no opponent and moved to the next round without fight.");
+        view.display(gladiator + " had no opponent and moved to the next round without fight.");
     }
 
 
