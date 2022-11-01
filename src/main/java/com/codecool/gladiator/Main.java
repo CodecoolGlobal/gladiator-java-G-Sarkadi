@@ -12,7 +12,7 @@ public class Main {
         colosseum.runSimulation();
 
         Colosseum secondColosseum = new Colosseum(new ConsoleView(), colosseum.getSurvivingGladiators());
-        secondColosseum.runSecondarySimulation();
+        secondColosseum.runSecondSimulation();
     }
 
 }

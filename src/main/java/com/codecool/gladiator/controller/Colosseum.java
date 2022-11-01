@@ -18,7 +18,7 @@ public class Colosseum {
     private static final int SPARING_CHANCE = 25;
 
     private final Viewable view;
-    private final GladiatorFactory gladiatorFactory;
+    private GladiatorFactory gladiatorFactory = null;
     private int stages = 2;
     private final boolean sparing;
     private List<Gladiator> survivingGladiators = new ArrayList<>();
@@ -31,9 +31,8 @@ public class Colosseum {
 
     public Colosseum(Viewable view, List<Gladiator> survivingGladiators) {
         this.view = view;
-        this.sparing = false;
-        this.gladiatorFactory = null;
         this.survivingGladiators = survivingGladiators;
+        this.sparing = false;
     }
 
     /**
@@ -54,7 +53,7 @@ public class Colosseum {
     /**
      * Runs the second Tournament with the survivors of the first
      */
-    public void runSecondarySimulation() {
+    public void runSecondSimulation() {
         welcome();
         if (survivingGladiators.isEmpty()) {
             announceNoTournament();
@@ -105,6 +104,10 @@ public class Colosseum {
             winner = simulateCombat(new Combat(new Contestants(getChampion(tournament.getLeftBranch()), getChampion(tournament.getRightBranch()))));
         }
         return winner;
+    }
+
+    public List<Gladiator> getSurvivingGladiators() {
+        return survivingGladiators;
     }
 
     private Gladiator simulateCombat(Combat combat) {
@@ -194,9 +197,5 @@ public class Colosseum {
 
     private void announceSingleContestant(Gladiator gladiator) {
         view.display("The sole survivor from the previous tournament is " + gladiator + " so this tournament is postponed!");
-    }
-
-    public List<Gladiator> getSurvivingGladiators() {
-        return survivingGladiators;
     }
 }

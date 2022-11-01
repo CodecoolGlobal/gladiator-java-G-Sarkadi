@@ -72,7 +72,6 @@ public class Combat {
                     winner = attacker;
                     attacker.levelUp();
                     attacker.recuperate();
-                    defender.recuperate();
                     break;
                 }
 
