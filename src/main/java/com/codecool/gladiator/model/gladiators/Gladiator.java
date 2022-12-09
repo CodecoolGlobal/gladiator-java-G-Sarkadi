@@ -1,5 +1,8 @@
 package com.codecool.gladiator.model.gladiators;
 
+import com.codecool.gladiator.util.RandomUtils;
+
+
 public abstract class Gladiator {
 
     private final String name;
@@ -8,6 +11,13 @@ public abstract class Gladiator {
     private final int baseDex;
     private int level;
     private int currentHp;
+    private WeaponEffect weaponEffect;
+    private static final int WEAPON_EFFECT_CHANCE = 10;
+    private int bleedings = 0;
+    private int poisonedDuration = 0;
+    private int poisonedTimes = 0;
+    private int burningDuration = 0;
+    private int paralyzedDuration = 0;
 
     /**
      * Constructor for Gladiators
@@ -25,6 +35,7 @@ public abstract class Gladiator {
         this.baseDex = baseDex;
         this.level = level;
         this.currentHp = this.getMaxHp();
+        handleWeaponEffect();
     }
 
     /**
@@ -107,10 +118,6 @@ public abstract class Gladiator {
         return currentHp <= 0;
     }
 
-    public int getHp() {
-        return baseHp;
-    }
-
     public int getSp() {
         return getMaxSp();
     }
@@ -125,6 +132,59 @@ public abstract class Gladiator {
 
     public void healUp() {
         currentHp = getMaxHp();
+    }
+
+    public abstract String getCustomHitMessage(int damage);
+
+    public abstract String getCustomMissMessage();
+
+    public void setBleeding(int bleedings) {
+        this.bleedings = bleedings;
+    }
+
+    public void setPoisonedDuration(int poisoned) {
+        this.poisonedDuration = poisoned;
+    }
+
+    public void setPoisonedTimes() {
+        this.poisonedTimes++;
+    }
+
+    public void setBurning(int burningDuration) {
+        this.burningDuration += burningDuration;
+    }
+
+    public void setParalyzed(int paralyzedDuration) {
+        this.paralyzedDuration += paralyzedDuration;
+    }
+
+    public int getBleedings() {
+        return bleedings;
+    }
+
+    public int getPoisonedDuration() {
+        return poisonedDuration;
+    }
+
+    public int getPoisonedTimes() {
+        return poisonedTimes;
+    }
+
+    public int getBurningDuration() {
+        return burningDuration;
+    }
+
+    public int getParalyzedDuration() {
+        return paralyzedDuration;
+    }
+
+    public void recuperate() {
+        currentHp = getMaxHp();
+        bleedings = 0;
+        poisonedDuration = 0;
+        poisonedTimes = 0;
+        burningDuration = 0;
+        paralyzedDuration = 0;
     }
 
     public enum Multiplier {
@@ -143,12 +203,41 @@ public abstract class Gladiator {
         }
     }
 
+    public enum WeaponEffect {
+        BLEEDING,
+        POISON,
+        BURNING,
+        PARALYZING,
+        CRITICAL_HIT;
+
+        public static WeaponEffect getRandomWeaponEffect() {
+            WeaponEffect[] weaponEffects = values();
+            return weaponEffects[RandomUtils.getRandom().nextInt(weaponEffects.length)];
+        }
+    }
+
+
+    private void handleWeaponEffect() {
+        boolean isWeaponEffect = RandomUtils.getChance(WEAPON_EFFECT_CHANCE);
+        if (isWeaponEffect) {
+            this.weaponEffect = WeaponEffect.getRandomWeaponEffect();
+        }
+    }
+
+    public WeaponEffect getWeaponEffect() {
+        return weaponEffect;
+    }
+
     @Override
     public String toString() {
+        String weaponEffectString = "";
+        if (weaponEffect != null) {
+            weaponEffectString = ", Weapon effect: " + weaponEffect;
+        }
         return getFullName() +
                 " (" + currentHp + "/" + currentHp + " HP, " +
                 getMaxSp() + " SP, " +
                 getMaxDex() + " DEX, " +
-                getLevel() + " LVL)";
+                getLevel() + " LVL" + weaponEffectString + ")";
     }
 }

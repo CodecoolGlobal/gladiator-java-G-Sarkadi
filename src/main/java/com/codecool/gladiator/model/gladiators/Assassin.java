@@ -28,4 +28,14 @@ public class Assassin extends Gladiator {
     protected Multiplier getDexMultiplier() {
         return Multiplier.High;
     }
+
+    @Override
+    public String getCustomHitMessage(int damage) {
+        return "The sneaky attack of " + getName() + " caused " + damage + " damage";
+    }
+
+    @Override
+    public String getCustomMissMessage() {
+        return "The dagger of " + getName() + " couldn't find the target";
+    }
 }

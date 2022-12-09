@@ -10,18 +10,27 @@ import java.util.List;
  * Combat class, used for simulating fights between pairs of gladiators
  */
 public class Combat {
-
-    private final Gladiator gladiator1;
-    private final Gladiator gladiator2;
-
-    private final List<String> combatLog;
-
+    private static final int BLEEDING_CHANCE = 5;
+    private static final int POISON_CHANCE = 20;
+    private static final int BURNING_CHANCE = 15;
+    private static final int PARALYZING_CHANCE = 10;
+    private static final int CRITICAL_HIT_CHANCE = 5;
+    private static final int MIN_BURN_DURATION = 1;
+    private static final int MAX_BURN_DURATION = 5;
+    private static final int PARALYZED_DURATION = 3;
     private final static int MIN_CLAMP = 10;
     private final static int MAX_CLAMP = 100;
     private final static double MIN_ATTACK_MODIFIER = 0.1;
     private final static double MAX_ATTACK_MODIFIER = 0.5;
     private final static int MIN_PERCENT = 1;
     private final static int MAX_PERCENT = 100;
+    private static final int POISON_DURATION = 3;
+    private static final int LETHAL_POISON_TIMES = 2;
+
+    private final Gladiator gladiator1;
+    private final Gladiator gladiator2;
+
+    private final List<String> combatLog;
 
     public Combat(Contestants contestants) {
         this.gladiator1 = contestants.gladiator1;
@@ -56,16 +65,26 @@ public class Combat {
             boolean isThereAHit = isThereAHit(attacker,defender);
             if (isThereAHit) {
                 int damage = calculateAttack(attacker, defender);
-                combatLog.add(attacker.getName() + " deals " + damage + " damage");
-                if (defender.isDead()) {
-//                    combatLog.add(defender + " has died, " + attacker + " wins!\n");
+
+                // check if defender already poisoned, if yes, dies immediately
+                if (defender.getPoisonedTimes() >= LETHAL_POISON_TIMES) {
+                    combatLog.add(defender.getName() + " was poisoned a second time, died immediately");
                     winner = attacker;
                     attacker.levelUp();
-                    attacker.healUp();
+                    attacker.recuperate();
+                    break;
+                }
+
+                defender.decreaseHpBy(damage);
+                combatLog.add(attacker.getCustomHitMessage(damage));
+                if (defender.isDead()) {
+                    winner = attacker;
+                    attacker.levelUp();
+                    attacker.recuperate();
                     break;
                 }
             } else {
-                combatLog.add(attacker.getName() + " missed");
+                combatLog.add(attacker.getCustomMissMessage());
             }
             attacker = switchRoles(attacker);
             defender = switchRoles(defender);
@@ -78,6 +97,19 @@ public class Combat {
     }
 
     private boolean isThereAHit(Gladiator attacker, Gladiator defender) {
+        // if defender is paralyzed, there is a guaranteed hit
+        int defenderParalyzedDuration = defender.getParalyzedDuration();
+        if (defenderParalyzedDuration > 0){
+            defender.setParalyzed(--defenderParalyzedDuration);
+            return true;
+        }
+
+        // if attacker is paralyzed, there is a guaranteed miss
+        int attackerParalyzedDuration = attacker.getParalyzedDuration();
+        if (attackerParalyzedDuration > 0) {
+            return false;
+        }
+
         int chanceOfHitting = attacker.getDex() - defender.getDex();
         if (chanceOfHitting < MIN_CLAMP) {
             chanceOfHitting = MIN_CLAMP;
@@ -88,10 +120,106 @@ public class Combat {
     }
 
     private int calculateAttack(Gladiator attacker, Gladiator defender) {
+        // handle weapon effect hit and damage
+        Gladiator.WeaponEffect weaponEffect = attacker.getWeaponEffect();
+        boolean isHitByWeaponEffect = false;
+        if (weaponEffect != null) {
+            isHitByWeaponEffect = isHitByWeaponEffect(weaponEffect);
+        }
+        if (isHitByWeaponEffect) {
+            addWeaponEffectToAffectedGladiator(weaponEffect, defender);
+        }
+        int weaponEffectDamage = calculateWeaponEffectDamage(defender);
+
+        // handle base attack
         double attackModifier = RandomUtils.getDoubleValueBetween(MAX_ATTACK_MODIFIER, MIN_ATTACK_MODIFIER);
-        int damage = (int) (attacker.getSp() * attackModifier);
-        defender.decreaseHpBy(damage);
-        return damage;
+        int baseDamage = (int) (attacker.getSp() * attackModifier);
+
+        return baseDamage + weaponEffectDamage;
+    }
+
+    private boolean isHitByWeaponEffect(Gladiator.WeaponEffect weaponEffect) {
+        switch (weaponEffect) {
+            case BLEEDING:
+                return RandomUtils.getChance(BLEEDING_CHANCE);
+            case POISON:
+                return RandomUtils.getChance(POISON_CHANCE);
+            case BURNING:
+                return RandomUtils.getChance(BURNING_CHANCE);
+            case PARALYZING:
+                return RandomUtils.getChance(PARALYZING_CHANCE);
+            case CRITICAL_HIT:
+                return RandomUtils.getChance(CRITICAL_HIT_CHANCE);
+            default:
+                return false;
+        }
+    }
+
+    private void addWeaponEffectToAffectedGladiator(Gladiator.WeaponEffect weaponEffect, Gladiator defender) {
+        switch (weaponEffect) {
+            case BLEEDING:
+                // 2% damage in every turn, can have multiple bleedings with cumulative damage
+                defender.setBleeding(1);
+                combatLog.add(defender.getName() + " is bleeding!");
+                break;
+            case POISON:
+                // 5% damage for 3 turns, if poisoned again, dies immediately
+                defender.setPoisonedDuration(POISON_DURATION);
+                defender.setPoisonedTimes();
+                combatLog.add(defender.getName() + " is poisoned!");
+                break;
+            case BURNING:
+                // for 1-5 turns 5% damage, if burns again, the duration extended for 1-5 turns
+                int burnDuration = RandomUtils.getIntValueBetween(MAX_BURN_DURATION, MIN_BURN_DURATION);
+                defender.setBurning(burnDuration);
+                combatLog.add(defender.getName() + " is burning!");
+                break;
+            case PARALYZING:
+                // unable to attack or defend for 3 turns, if paralyzed again, it's reset to 3 turns
+                defender.setParalyzed(PARALYZED_DURATION);
+                combatLog.add(defender.getName() + " is paralyzed!");
+                break;
+            case CRITICAL_HIT:
+                // defender loses half of its hp
+                int halfHp = defender.getCurrentHp() / 2;
+                defender.decreaseHpBy(halfHp);
+                combatLog.add(defender.getName() + " suffered a critical hit and lost " + halfHp + " Hp!");
+                break;
+        }
+    }
+
+    private int calculateWeaponEffectDamage(Gladiator defender) {
+        double damage = 0;
+
+        // Bleeding, 2% damage in every turn, can have multiple bleedings with cumulative damage
+        int bleedings = defender.getBleedings();
+        if (bleedings > 0) {
+            for (int i = 0; i < bleedings; i++) {
+                damage += defender.getCurrentHp() * 0.02;
+            }
+            combatLog.add(defender.getName() + " suffered " + (int) damage + " damage from bleeding");
+            return (int) damage;
+        }
+
+        // Poisoned, 5% damage for 3 turns
+        int poisonDuration = defender.getPoisonedDuration();
+        if (poisonDuration > 0) {
+            damage += defender.getCurrentHp() * 0.05;
+            defender.setPoisonedDuration(--poisonDuration);
+            combatLog.add(defender.getName() + " suffered " + (int)damage + " damage from poison");
+            return (int) damage;
+        }
+
+        // Burning, 5% damage for random turns
+        int burningDuration = defender.getBurningDuration();
+        if (burningDuration > 0) {
+            damage += defender.getCurrentHp() * 0.05;
+            defender.setBurning(-1);
+            combatLog.add(defender.getName() + " suffered " + (int)damage + " damage from burning");
+            return (int) damage;
+        }
+
+        return 0;
     }
 
     public Gladiator getGladiator1() {
@@ -105,5 +233,4 @@ public class Combat {
     public String getCombatLog(String separator) {
         return String.join(separator, combatLog);
     }
-
 }

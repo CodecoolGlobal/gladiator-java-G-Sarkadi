@@ -5,6 +5,9 @@ import java.util.Random;
 public class RandomUtils {
 
     private static final Random RANDOM = new Random();
+    private static final int MAX_PERCENT = 101;
+    private static final int MIN_PERCENT = 1;
+
     public static Random getRandom() {
         return RANDOM;
     }
@@ -15,5 +18,9 @@ public class RandomUtils {
 
     public static double getDoubleValueBetween(double max, double min) {
         return ((max - min) + min ) * RANDOM.nextDouble();
+    }
+
+    public static boolean getChance(int percent) {
+        return getIntValueBetween(MAX_PERCENT, MIN_PERCENT) <= percent;
     }
 }

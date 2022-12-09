@@ -1,8 +1,6 @@
 package com.codecool.gladiator.util;
 
-import com.codecool.gladiator.model.Combat;
 import com.codecool.gladiator.model.Contestants;
-import com.codecool.gladiator.model.gladiators.Gladiator;
 
 import java.util.List;
 
@@ -106,7 +104,7 @@ public class Tournament {
             }
         } else {
             // there is a contestant, left / right branches supposed to be empty
-            leftBranch = new Tournament(getContestants());
+            leftBranch = new Tournament(contestants);
             rightBranch = new Tournament(value);
             contestants = null;
         }

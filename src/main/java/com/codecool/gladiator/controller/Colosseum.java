@@ -3,6 +3,7 @@ package com.codecool.gladiator.controller;
 import com.codecool.gladiator.model.Combat;
 import com.codecool.gladiator.model.Contestants;
 import com.codecool.gladiator.model.gladiators.*;
+import com.codecool.gladiator.util.RandomUtils;
 import com.codecool.gladiator.util.Tournament;
 import com.codecool.gladiator.view.Viewable;
 
@@ -14,14 +15,24 @@ public class Colosseum {
 
     public static final int MIN_TOURNAMENT_STAGES = 1;
     public static final int MAX_TOURNAMENT_STAGES = 10;
+    private static final int SPARING_CHANCE = 25;
 
     private final Viewable view;
-    private final GladiatorFactory gladiatorFactory;
+    private GladiatorFactory gladiatorFactory = null;
     private int stages = 2;
+    private final boolean sparing;
+    private List<Gladiator> survivingGladiators = new ArrayList<>();
 
     public Colosseum(Viewable view, GladiatorFactory gladiatorFactory) {
         this.view = view;
         this.gladiatorFactory = gladiatorFactory;
+        this.sparing = true;
+    }
+
+    public Colosseum(Viewable view, List<Gladiator> survivingGladiators) {
+        this.view = view;
+        this.survivingGladiators = survivingGladiators;
+        this.sparing = false;
     }
 
     /**
@@ -39,6 +50,27 @@ public class Colosseum {
         // announceChampion(getChampion(new BinaryTree<>(generateGladiators((int) Math.pow(2, stages)))));
     }
 
+    /**
+     * Runs the second Tournament with the survivors of the first
+     */
+    public void runSecondSimulation() {
+        welcome();
+        if (survivingGladiators.isEmpty()) {
+            announceNoTournament();
+            return;
+        } else if (survivingGladiators.size() == 1) {
+            Gladiator soleSurvivor = survivingGladiators.get(0);
+            soleSurvivor.healUp();
+            announceSingleContestant(soleSurvivor);
+            return;
+        }
+        introduceGladiators(survivingGladiators);
+        var contestants = splitGladiatorsIntoPairs(survivingGladiators);
+        var tournamentTree = new Tournament(contestants);
+        var champion = getChampion(tournamentTree);
+        announceChampion(champion);
+    }
+
     private List<Gladiator> generateGladiators(int numberOfGladiators) {
         List<Gladiator> gladiators = new ArrayList<>();
         for (int i = 0; i < numberOfGladiators; i++) {
@@ -52,17 +84,20 @@ public class Colosseum {
         List<Contestants> contestants = new LinkedList<>();
         while (!gladiators.isEmpty()) {
             Gladiator gladiator1 = gladiators.get(0);
-            Gladiator gladiator2 = gladiators.get(1);
-            contestants.add(new Contestants(gladiator1, gladiator2));
             gladiators.remove(gladiator1);
-            gladiators.remove(gladiator2);
+            Gladiator gladiator2 = null;
+            if (!gladiators.isEmpty()) {
+                gladiator2 = gladiators.get(0);
+                gladiators.remove(gladiator2);
+            }
+            contestants.add(new Contestants(gladiator1, gladiator2));
         }
         return contestants;
     }
 
     private Gladiator getChampion(Tournament tournament) {
         Contestants contestants = tournament.getContestants();
-        Gladiator winner = null;
+        Gladiator winner;
         if (contestants != null) {
             winner = simulateCombat(new Combat(contestants));
         } else {
@@ -71,9 +106,18 @@ public class Colosseum {
         return winner;
     }
 
+    public List<Gladiator> getSurvivingGladiators() {
+        return survivingGladiators;
+    }
+
     private Gladiator simulateCombat(Combat combat) {
         Gladiator gladiator1 = combat.getGladiator1();
         Gladiator gladiator2 = combat.getGladiator2();
+        if (gladiator2 == null) {
+            announceNoNeedForCombat(gladiator1);
+            gladiator1.levelUp();
+            return gladiator1;
+        }
         announceCombat(gladiator1, gladiator2);
 
         Gladiator winner = combat.simulate();
@@ -85,9 +129,22 @@ public class Colosseum {
         }
 
         displayCombatLog(combat);
-        announceWinnerAndLoser(winner, loser);
+        if (sparing) {
+            if (RandomUtils.getChance(SPARING_CHANCE)) {
+                loser.recuperate();
+                survivingGladiators.add(loser);
+                announceWinnerAndLoser(winner, loser);
+                return winner;
+            }
+        }
+        announceWinnerAndDead(winner, loser);
         return winner;
     }
+
+    private void announceNoNeedForCombat(Gladiator gladiator) {
+        view.display(gladiator + " had no opponent and moved to the next round without fight.");
+    }
+
 
     public void welcome() {
         view.display("Ave Caesar, and welcome to the Colosseum!");
@@ -111,23 +168,34 @@ public class Colosseum {
         view.display(String.format("\nDuel %s versus %s:", gladiator1.getName(), gladiator2.getName()));
         view.display(String.format(" - %s", gladiator1));
         view.display(String.format(" - %s", gladiator2));
-        view.display("\nBegin!");
+        view.display("Begin!");
     }
 
     private void displayCombatLog(Combat combat) {
         view.display(String.format(" - %s", combat.getCombatLog(", ")));
     }
 
-    private void announceWinnerAndLoser(Gladiator winner, Gladiator loser) {
+    private void announceWinnerAndDead(Gladiator winner, Gladiator loser) {
         view.display(String.format("%s has died, %s wins!\n", loser.getFullName(), winner.getFullName()));
+    }
+
+    private void announceWinnerAndLoser(Gladiator winner, Gladiator loser) {
+        view.display(String.format("%s has lost, but spared, %s wins!\n", loser.getFullName(), winner.getFullName()));
     }
 
     private void announceChampion(Gladiator champion) {
         if (champion != null) {
-            view.display(String.format("\nThe Champion of the Tournament is %s!", champion.getFullName()));
+            view.display(String.format("\nThe Champion of the Tournament is %s!\n\n\n", champion.getFullName()));
         } else {
             view.display("\nHave mercy, Caesar, the Tournament will start soon!");
         }
     }
 
+    private void announceNoTournament() {
+        view.display("There aren't any surviving gladiator from the last tournament, so this tournament is postponed!");
+    }
+
+    private void announceSingleContestant(Gladiator gladiator) {
+        view.display("The sole survivor from the previous tournament is " + gladiator + " so this tournament is postponed!");
+    }
 }

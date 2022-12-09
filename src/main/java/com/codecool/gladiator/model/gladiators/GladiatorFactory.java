@@ -11,7 +11,7 @@ import java.util.List;
 public class GladiatorFactory {
 
     private List<String> names;
-    private List<GladiatorTypes> gladiatorTypes = new ArrayList<>();
+    private final List<GladiatorTypes> gladiatorTypes = new ArrayList<>();
     private static final int MIN_ATTRIBUTE = 25;
     private static final int MAX_ATTRIBUTE = 100;
     private static final int MIN_LEVEL = 1;
