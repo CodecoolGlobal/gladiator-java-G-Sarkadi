@@ -3,15 +3,16 @@
 Organize a gladiator tournament for life and death. This is a small Java program to simulate a gladiator tournament and demonstrate some OOP principles.
 It uses the MVC pattern and generates the tournament pairing with a tree.
 
-## Model
+## Architecture
+
+### Model
 Contains an abstract Gladiator class, from whom all of the different gladiators inherit. Also has a GladiatorFactory for gladiator creation an a model for the
 pairs of contestants.
 
-## View
-So far, it only has a console view, which implements a View interface. If there will be a proper display, this will make the switch easier.
-It gets the user's input and shows the results of the tournament.
+### View
+It gets the users input and shows the results of the tournament. So far, it only has a console view, which implements a View interface. If there will be a proper display, this will make the switch easier.
 
-## Controller
+### Controller
 It handles the business logic needed to organize a tournament, create gladiators, and simulate the fights.
 Uses utility classes to generate random numbers and a tree to generate the tournament pairings.
 
